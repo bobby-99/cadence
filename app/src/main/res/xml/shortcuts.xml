@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="quick_add"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_add"
+        android:shortcutShortLabel="@string/shortcut_add_short"
+        android:shortcutLongLabel="@string/shortcut_add_long">
+        <intent
+            android:action="com.bobby.cadence.QUICK_ADD"
+            android:targetClass="com.bobby.cadence.MainActivity"
+            android:targetPackage="com.bobby.cadence" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="open_tasks"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_list"
+        android:shortcutShortLabel="@string/shortcut_list_short"
+        android:shortcutLongLabel="@string/shortcut_list_long">
+        <intent
+            android:action="com.bobby.cadence.OPEN_TASKS"
+            android:targetClass="com.bobby.cadence.MainActivity"
+            android:targetPackage="com.bobby.cadence" />
+    </shortcut>
+</shortcuts>

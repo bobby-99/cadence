@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Cadence</string>
+    <string name="shortcut_add_short">New task</string>
+    <string name="shortcut_add_long">Quick add a task</string>
+    <string name="shortcut_list_short">Tasks</string>
+    <string name="shortcut_list_long">Open task list</string>
+    <string name="tile_label">New task</string>
+    <string name="widget_desc">Your next tasks, tick them off or add one</string>
+</resources>

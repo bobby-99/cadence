@@ -1,0 +1,17 @@
+name: Suggestion
+description: An idea that fits Cadence's one job
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cadence is a calm, single-purpose to-do list. Projects, subtasks, task tags, sync and accounts are out of scope.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+    validations: { required: true }
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like to happen?
