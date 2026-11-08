@@ -1,11 +1,20 @@
 version: 2
 updates:
+  # Build tooling and libraries are upgraded by hand, on purpose: a major bump of the Android Gradle Plugin,
+  # Kotlin or Compose can break the build. Only minor and patch updates are proposed here.
   - package-ecosystem: gradle
     directory: "/"
     schedule:
       interval: monthly
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 2
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "com.android.application"
+      - dependency-name: "org.jetbrains.kotlin.*"
+      - dependency-name: "com.google.devtools.ksp"
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: monthly
+    open-pull-requests-limit: 2

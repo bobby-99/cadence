@@ -138,7 +138,7 @@ fun IconTile(icon: ImageVector? = null, text: String? = null, tint: Color = C.Ac
 }
 
 @Composable
-private fun RowShell(onClick: (() -> Unit)?, content: @Composable () -> Unit) {
+private fun RowShell(onClick: (() -> Unit)?, content: @Composable androidx.compose.foundation.layout.RowScope.() -> Unit) {
     Row(
         rowModifier(onClick).fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
