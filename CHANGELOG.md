@@ -7,7 +7,7 @@ Notable changes. Newest first. Versions follow [semantic versioning](https://sem
 ## 2.1.0
 
 - Settings rebuilt as organised pages (Appearance, Tasks, Reminders, Phone calendar, Backup and restore, Permissions) with an About page, help, and a live "how Cadence understands you" guide.
-- First-run tutorial: type a task, swipe, calendar and focus, and permissions.
+- First-run tutorial: type a task, swipe a real practice task row, calendar and focus, and permissions.
 - New app icon: a notepad with a checked box.
 - Microphone button in the new-task sheet.
 - Tighter list margins.

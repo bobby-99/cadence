@@ -1,59 +1,79 @@
+<div align="center">
+
+<img src="docs/icon.png" width="96" alt="Cadence icon" />
+
 # Cadence
 
-A quiet, single-purpose to-do app for Android. You write a task the way you would say it, and Cadence works out the date, time, repeat and priority. It reminds you reliably, and keeps everything on your phone.
+**A quiet to-do app for Android. Type a task the way you'd say it.**
 
-> Free for personal use. Not for sale and not for use in a business: see [License](#license).
+[![Release](https://img.shields.io/github/v/release/bobby-99/cadence?style=flat-square&color=F2B04A&labelColor=111111)](https://github.com/bobby-99/cadence/releases/latest)
+[![Android 8+](https://img.shields.io/badge/Android-8.0%2B-F2B04A?style=flat-square&labelColor=111111&logo=android&logoColor=white)](#install)
+[![Kotlin](https://img.shields.io/badge/Kotlin-Compose-F2B04A?style=flat-square&labelColor=111111&logo=kotlin&logoColor=white)](#build)
+[![License](https://img.shields.io/badge/license-PolyForm%20NC-F2B04A?style=flat-square&labelColor=111111)](#license)
+[![Offline](https://img.shields.io/badge/no%20account-no%20ads%20no%20network-F2B04A?style=flat-square&labelColor=111111)](PRIVACY.md)
 
-## What it does
+<br />
 
-- **Type it, don't fill it in.** "Call mom tomorrow 6pm !!", "Gym every mon wed fri 7am", "Study for 45 min tomorrow 6pm". Live highlighting shows what was understood.
-- **Reliable reminders.** Exact alarms, a catch-up for reminders missed while the phone was off, and a safety net that re-arms them every 30 minutes. A priority card over any app while you use the phone, a notification when you are not. Done, Snooze and Skip work from the lock screen.
-- **Swipe.** Right: complete in one pull. Left: opens on Edit, Snooze, Focus and Delete. Undo for a few seconds.
-- **Repeats with streaks**, including "after completion" repeats.
-- **Calendar** with search, week and month views, and your phone calendar's events alongside. Tasks can be written to the phone calendar.
-- **Focus**: Pomodoro and freestyle timers, tags, daily goal, and Insights with a heatmap.
-- **Home-screen widget** that adds and completes tasks without opening the app.
-- **Share to Cadence** from any app.
-- **Private.** No account, no sync, no ads, no network. Backup and restore to a file or an automatic folder backup.
+<img src="docs/screenshots/overview.png" alt="Cadence screenshots: list, adding a task, calendar and focus timer" />
 
-What it deliberately does not do: projects, subtasks, task tags, collaboration, sync. See [CONTRIBUTING](CONTRIBUTING.md#what-belongs-in-cadence).
+</div>
+
+<br />
+
+Write **"Call mom tomorrow 6pm !!"** and Cadence works out the date, time and priority. It reminds you reliably, and everything stays on your phone.
+
+## Features
+
+| | |
+|---|---|
+| **Type it, don't fill it in** | "Gym every mon wed fri 7am", "Study for 45 min tomorrow 6pm". Live highlighting shows what was understood. A mic button is there too. |
+| **Reminders you can trust** | Exact alarms, a catch-up for ones missed while the phone was off, and a safety net that re-arms them every 30 minutes. A priority card over any app while you use the phone, a notification when you don't. Done and Snooze work from the lock screen. |
+| **One-motion swipes** | Right completes. Left opens on Edit, Snooze, Focus and Delete. Undo for a few seconds. |
+| **Repeats with streaks** | Daily, weekly, monthly, custom, and "after completion". |
+| **Calendar** | Week and month views, search, and your phone calendar's events alongside your tasks. |
+| **Focus** | Pomodoro and freestyle timers, tags, a daily goal and an Insights heatmap. |
+| **Widget and share** | Add and complete tasks from the home screen. Share text from any app into Cadence. |
+| **Private by design** | No account, no sync, no ads, no network. Backup and restore to a file, or to a folder automatically. |
+
+On purpose it has no projects, subtasks, task tags, collaboration or sync. See [what belongs in Cadence](CONTRIBUTING.md#what-belongs-in-cadence).
 
 ## Install
 
-Download the APK from the [Releases](https://github.com/bobby-99/cadence/releases) page and open it. Android will ask you to allow installs from your browser or file manager the first time. Requires Android 8.0 (API 26) or newer.
+1. Download the APK from the [latest release](https://github.com/bobby-99/cadence/releases/latest).
+2. Open it. Android asks once to allow installs from your browser or file manager.
+3. Follow the short first-run tutorial.
 
-Updates install over the previous version and keep your tasks, as long as they come from the same release key.
+Needs Android 8.0 (API 26) or newer. Updates install over the old version and keep your tasks.
 
-## Build from source
+## Build
 
-You need JDK 17 and the Android SDK (platform 35). With Android Studio, just open the folder. From a terminal:
+JDK 17 and the Android SDK 35, or just open the folder in Android Studio.
 
+```sh
+gradle :app:testDebugUnitTest    # tests
+gradle :app:assembleRelease      # the APK
 ```
-gradle :app:testDebugUnitTest      # unit tests
-gradle :app:assembleRelease        # app/build/outputs/apk/release/app-release.apk
-```
 
-A build without the maintainer's signing key is signed with your debug key, so it installs fine but will not update the official release. See [docs/RELEASING.md](docs/RELEASING.md).
+Without the maintainer's key the build is signed with your debug key, so it installs but won't update the official release. Maintainers: see [docs/RELEASING.md](docs/RELEASING.md).
 
-## Project layout
+<details>
+<summary>Project layout</summary>
 
 ```
 app/src/main/java/com/bobby/cadence/
-  data/     Room database, repository, preferences, backup format, phone-calendar bridge
-  nlp/      The task parser (plain Kotlin, unit tested)
-  alarm/    Reminders: scheduler, notifications, priority card, focus timer engine
-  ui/       Jetpack Compose screens: home, editor, calendar, focus, settings, tutorial
-  widget/   Home-screen widget and its add dialog
+  data/    database, repository, preferences, backup, phone-calendar bridge
+  nlp/     the task parser (plain Kotlin, unit tested)
+  alarm/   scheduler, notifications, priority card, focus timer
+  ui/      Compose screens: home, editor, calendar, focus, settings, tutorial
+  widget/  home-screen widget
 ```
+
+</details>
 
 ## Contributing
 
-Bug reports and focused pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) first; it is short. Security issues: [SECURITY.md](SECURITY.md).
-
-## Privacy
-
-Everything stays on the device. Details in [PRIVACY.md](PRIVACY.md).
+Focused bug reports and pull requests are welcome. Read [CONTRIBUTING](CONTRIBUTING.md) first; it's short. Security issues go to [SECURITY](SECURITY.md).
 
 ## License
 
-[PolyForm Noncommercial 1.0.0](LICENSE). You may use, copy and change Cadence for any noncommercial purpose, including personal use, study and hobby projects. You may not sell it or use it for commercial purposes. This is a source-available license, not an OSI-approved open-source one. Third-party components are listed in [NOTICE](NOTICE).
+[PolyForm Noncommercial 1.0.0](LICENSE): free for personal, hobby and study use; not for sale or any commercial use. It is source-available, not OSI open source. Third-party components are in [NOTICE](NOTICE). Privacy details: [PRIVACY](PRIVACY.md).

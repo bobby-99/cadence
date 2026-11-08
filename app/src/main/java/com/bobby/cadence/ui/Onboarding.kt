@@ -103,7 +103,7 @@ fun OnboardingScreen(is24: Boolean, onFinish: () -> Unit) {
                 when (s) {
                     0 -> StepWelcome()
                     1 -> StepType(today, is24)
-                    2 -> StepSwipe()
+                    2 -> StepSwipe(today, is24)
                     3 -> StepTour()
                     4 -> StepPermissions(perms)
                     else -> StepDone()
@@ -186,9 +186,9 @@ private fun StepType(today: LocalDate, is24: Boolean) {
 }
 
 @Composable
-private fun StepSwipe() {
-    Title("Swipe a task", "Everything you do to a task is one swipe away.")
-    SwipeDemo()
+private fun StepSwipe(today: LocalDate, is24: Boolean) {
+    Title("Swipe a task", "This is a real task row. Try it: drag it left or right with your finger.")
+    SwipeDemo(today, is24)
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Hint("Right", "One pull and the task is done.")
         Hint("Left", "Slides open on Edit, Snooze, Focus and Delete. Tap one.")
@@ -204,66 +204,39 @@ private fun Hint(head: String, text: String) {
     }
 }
 
-/** A looping animation of the real swipe: right completes; left rests open on Edit, Snooze, Focus, Delete. */
+/** The real [TaskRow], on a practice task. Nothing here is saved; it just answers what you did. */
 @Composable
-private fun SwipeDemo() {
-    val x = remember { Animatable(0f) }
-    val d = LocalDensity.current
-    val cell = 70.dp
-    val open = with(d) { (cell * 4).toPx() }
-    val full = with(d) { 330.dp.toPx() }
-    var caption by remember { mutableStateOf("") }
+private fun SwipeDemo(today: LocalDate, is24: Boolean) {
     var done by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            caption = "Right: one pull completes it"
-            done = false
-            delay(700)
-            x.animateTo(full * 0.5f, tween(650, easing = FastOutSlowInEasing)); delay(500)
-            done = true
-            x.animateTo(full, tween(350, easing = FastOutSlowInEasing)); delay(500)
-            x.snapTo(0f); delay(900)
-            done = false
-            caption = "Left: Edit, Snooze, Focus, Delete"
-            x.animateTo(-open, tween(650, easing = FastOutSlowInEasing)); delay(1800)
-            x.animateTo(0f, tween(450, easing = FastOutSlowInEasing)); delay(800)
+    var gone by remember { mutableStateOf(false) }
+    var msg by remember { mutableStateOf("Drag the task to the right or to the left.") }
+    val task = remember(done) {
+        com.bobby.cadence.data.Task(
+            id = 1, title = "Call mom", dueDate = today.toEpochDay(), dueTime = 18 * 60, priority = 3, completed = done,
+        )
+    }
+    // put the practice task back a moment after it was completed or deleted
+    LaunchedEffect(done, gone) {
+        if (done || gone) {
+            delay(1800)
+            done = false; gone = false
+            msg = "Back again. Try the other direction."
         }
     }
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Box(Modifier.fillMaxWidth().height(82.dp).clip(RoundedCornerShape(14.dp))) {
-            if (x.value > 1f) Box(
-                Modifier.align(Alignment.CenterStart).fillMaxHeight().width(with(d) { x.value.toDp() }).background(C.Done.copy(alpha = if (done) 1f else 0.5f)),
-                contentAlignment = Alignment.CenterStart,
-            ) { Text("\u2713", color = C.AccentOn, style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(start = 22.dp)) }
-            Row(Modifier.align(Alignment.CenterEnd).fillMaxHeight()) {
-                DemoCell("Edit", Color(0xFF332A22), C.Text, cell)
-                DemoCell("Snooze", Color(0xFF1A2230), Color(0xFF9DB0CC), cell)
-                DemoCell("Focus", Color(0xFF362A18), C.Accent, cell)
-                DemoCell("Delete", Color(0xFF301A1C), C.Danger, cell)
-            }
-            Row(
-                Modifier.offset { androidx.compose.ui.unit.IntOffset(x.value.roundToInt(), 0) }.fillMaxSize().background(C.Bg).padding(horizontal = 6.dp),
-                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp),
-            ) {
-                Column(Modifier.width(40.dp), horizontalAlignment = Alignment.End) {
-                    Text("6:00", color = C.Dim, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
-                    Text("pm", color = C.Faint, style = MaterialTheme.typography.bodySmall)
-                }
-                Box(Modifier.size(14.dp).clip(CircleShape).border(2.dp, C.High, CircleShape))
-                Column(Modifier.weight(1f)) {
-                    Text("Call mom", color = C.Text, style = MaterialTheme.typography.titleMedium)
-                    Text("Today  \u00B7  High", color = C.Faint, style = MaterialTheme.typography.bodySmall)
-                }
-            }
+        Box(Modifier.fillMaxWidth().height(80.dp).clip(RoundedCornerShape(16.dp)).background(C.Bg).border(1.dp, C.Stroke, RoundedCornerShape(16.dp))) {
+            if (!gone) TaskRow(
+                task = task, today = today, is24 = is24, showDate = false,
+                onToggle = { done = !done; msg = if (done) "Completed from the dot." else "Un-completed." },
+                onOpen = { msg = "Tapping a task opens it." },
+                onEdit = { msg = "Edit opens the task so you can change anything." },
+                onSnooze = { msg = "Snooze pushes the reminder back." },
+                onFocus = { msg = "Focus starts a timer linked to this task." },
+                onSwipeComplete = { done = true; msg = "Done. In the app you get an Undo for a few seconds." },
+                onSwipeDelete = { gone = true; msg = "Deleted. In the app you get an Undo for a few seconds." },
+            )
         }
-        Text(caption, color = C.Faint, style = MaterialTheme.typography.labelMedium, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
-    }
-}
-
-@Composable
-private fun DemoCell(label: String, bg: Color, fg: Color, w: androidx.compose.ui.unit.Dp) {
-    Box(Modifier.width(w).fillMaxHeight().background(bg), contentAlignment = Alignment.Center) {
-        Text(label, color = fg, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold, maxLines = 1)
+        Text(msg, color = C.Accent, style = MaterialTheme.typography.labelLarge, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
     }
 }
 
