@@ -13,3 +13,4 @@ captures/
 dist/
 *.apk
 *.aab
+target/

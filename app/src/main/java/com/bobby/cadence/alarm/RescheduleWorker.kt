@@ -20,6 +20,7 @@ class RescheduleWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker
         return try {
             app.repo.deliverMissed()
             app.repo.rescheduleAll()
+            com.bobby.cadence.data.SyncRunner.run(app)
             Result.success()
         } catch (e: Exception) {
             Result.retry()

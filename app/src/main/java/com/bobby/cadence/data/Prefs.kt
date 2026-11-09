@@ -64,6 +64,12 @@ data class AppSettings(
     val keepScreenOn: Boolean = true,
     /** freestyle: optional target in minutes, 0 = none */
     val freestyleGoalMin: Int = 0,
+    // ---- sync with other devices (belongs to this phone, not part of backups) ----
+    val syncEnabled: Boolean = false,
+    val syncFolderUri: String = "",
+    val syncFolderName: String = "",
+    val lastSyncAt: Long = 0L,
+    val lastSyncMsg: String = "",
     /** the first-run tutorial has been shown (or skipped); not part of backups */
     val onboarded: Boolean = false,
 )
@@ -112,6 +118,11 @@ class Prefs(ctx: Context) {
             keepScreenOn = sp.getBoolean("keepScreenOn", d.keepScreenOn),
             freestyleGoalMin = sp.getInt("freestyleGoalMin", d.freestyleGoalMin),
             onboarded = sp.getBoolean("onboarded", d.onboarded),
+            syncEnabled = sp.getBoolean("syncEnabled", d.syncEnabled),
+            syncFolderUri = sp.getString("syncFolderUri", d.syncFolderUri) ?: "",
+            syncFolderName = sp.getString("syncFolderName", d.syncFolderName) ?: "",
+            lastSyncAt = sp.getLong("lastSyncAt", d.lastSyncAt),
+            lastSyncMsg = sp.getString("lastSyncMsg", d.lastSyncMsg) ?: "",
             recentSnoozes = (sp.getString("recentSnoozes", "") ?: "").split(",").mapNotNull { it.toIntOrNull() },
             hiddenCalendars = (sp.getString("hiddenCalendars", "") ?: "").split(",").mapNotNull { it.toLongOrNull() }.toSet(),
         )
@@ -157,6 +168,11 @@ class Prefs(ctx: Context) {
             .putBoolean("keepScreenOn", n.keepScreenOn)
             .putInt("freestyleGoalMin", n.freestyleGoalMin)
             .putBoolean("onboarded", n.onboarded)
+            .putBoolean("syncEnabled", n.syncEnabled)
+            .putString("syncFolderUri", n.syncFolderUri)
+            .putString("syncFolderName", n.syncFolderName)
+            .putLong("lastSyncAt", n.lastSyncAt)
+            .putString("lastSyncMsg", n.lastSyncMsg)
             .putString("recentSnoozes", n.recentSnoozes.joinToString(","))
             .putString("hiddenCalendars", n.hiddenCalendars.joinToString(","))
             .apply()

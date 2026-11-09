@@ -43,6 +43,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -396,7 +398,49 @@ private fun DataPage(
         }
     }
 
+    val syncScope = rememberCoroutineScope()
+    val syncApp = ctx.applicationContext as com.bobby.cadence.CadenceApp
+    val syncFolderLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+        if (uri != null) {
+            try {
+                ctx.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            } catch (e: Exception) {
+            }
+            val folder = BackupFolder.folderName(ctx, uri)
+            onChange { it.copy(syncEnabled = true, syncFolderUri = uri.toString(), syncFolderName = folder, lastSyncMsg = "") }
+            syncApp.syncNow()
+        }
+    }
+
     SettingsPage("Backup and restore", back) {
+        SGroup(
+            title = "Sync with a computer",
+            footer = "Cadence for Windows reads and writes one file, cadence-sync.json, in a folder that both devices can see (Syncthing, OneDrive, Google Drive and so on). No account and no server. Pick the same folder on both.",
+        ) {
+            row {
+                SwitchRow("Sync through a folder", null, s.syncEnabled) { v ->
+                    if (v && s.syncFolderUri.isBlank()) syncFolderLauncher.launch(null) else onChange { it.copy(syncEnabled = v) }
+                }
+            }
+            if (s.syncEnabled) {
+                row { NavRow("Folder", s.syncFolderName.ifBlank { "Choose" }) { syncFolderLauncher.launch(null) } }
+                row {
+                    val last = if (s.lastSyncAt > 0L) java.time.format.DateTimeFormatter.ofPattern("d MMM, h:mm a").format(
+                        java.time.LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(s.lastSyncAt), java.time.ZoneId.systemDefault()),
+                    ) else "Never"
+                    InfoRow("Last sync", last)
+                }
+                if (s.lastSyncMsg.isNotBlank()) row { InfoRow("Problem", s.lastSyncMsg, C.Danger) }
+                row {
+                    ActionRow("Sync now") {
+                        syncScope.launch {
+                            val ok = com.bobby.cadence.data.SyncRunner.run(syncApp)
+                            Toast.makeText(ctx, if (ok) "Synced" else "Sync failed", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
         SGroup(
             title = "Backup file",
             footer = "A backup holds your tasks, focus history and settings. It does not hold the backup folder or phone-calendar choices, which belong to this phone.",

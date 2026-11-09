@@ -10,6 +10,7 @@ import com.bobby.cadence.data.TaskRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class CadenceApp : Application() {
@@ -28,6 +29,16 @@ class CadenceApp : Application() {
     private val appScope = CoroutineScope(
         SupervisorJob() + Dispatchers.IO + kotlinx.coroutines.CoroutineExceptionHandler { _, _ -> },
     )
+
+    /** Syncs now, in the background. */
+    fun syncNow() {
+        appScope.launch {
+            try {
+                com.bobby.cadence.data.SyncRunner.run(this@CadenceApp)
+            } catch (e: Exception) {
+            }
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -51,6 +62,16 @@ class CadenceApp : Application() {
                 kotlinx.coroutines.delay(300)
                 try {
                     com.bobby.cadence.widget.QuickWidgetProvider.refresh(this@CadenceApp)
+                } catch (e: Exception) {
+                }
+            }
+        }
+        // sync with the shared folder a few seconds after any change to the list (and once at start)
+        appScope.launch {
+            db.taskDao().observeAll().collectLatest {
+                kotlinx.coroutines.delay(4000)
+                try {
+                    com.bobby.cadence.data.SyncRunner.run(this@CadenceApp)
                 } catch (e: Exception) {
                 }
             }

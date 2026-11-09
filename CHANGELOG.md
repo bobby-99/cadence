@@ -4,6 +4,10 @@ Notable changes. Newest first. Versions follow [semantic versioning](https://sem
 
 ## Unreleased
 
+- Sync with a computer through a shared folder (`cadence-sync.json`, see docs/SYNC.md). Every task now has an identity and a last-changed time, and deletions are remembered so they reach the other device. Existing tasks are upgraded automatically.
+- Cadence for Windows (early version): list, add with typing shortcuts, complete (repeats continue), edit, delete, sync.
+- First-run tutorial: the swipe step now uses a real task row you can drag.
+
 ## 2.1.0
 
 - Settings rebuilt as organised pages (Appearance, Tasks, Reminders, Phone calendar, Backup and restore, Permissions) with an About page, help, and a live "how Cadence understands you" guide.

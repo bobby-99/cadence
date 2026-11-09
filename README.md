@@ -33,6 +33,7 @@ Write **"Call mom tomorrow 6pm !!"** and Cadence works out the date, time and pr
 | **Calendar** | Week and month views, search, and your phone calendar's events alongside your tasks. |
 | **Focus** | Pomodoro and freestyle timers, tags, a daily goal and an Insights heatmap. |
 | **Widget and share** | Add and complete tasks from the home screen. Share text from any app into Cadence. |
+| **Windows companion** | A tiny native app that stays in step with the phone through a shared folder. No server. See [Sync](docs/SYNC.md). |
 | **Private by design** | No account, no sync, no ads, no network. Backup and restore to a file, or to a folder automatically. |
 
 On purpose it has no projects, subtasks, task tags, collaboration or sync. See [what belongs in Cadence](CONTRIBUTING.md#what-belongs-in-cadence).
@@ -44,6 +45,8 @@ On purpose it has no projects, subtasks, task tags, collaboration or sync. See [
 3. Follow the short first-run tutorial.
 
 Needs Android 8.0 (API 26) or newer. Updates install over the old version and keep your tasks.
+
+**Windows (optional):** download `Cadence-…-windows-x64.exe` from the same release page and run it. Then set up sync: on the phone, Settings, Backup and restore, *Sync with a computer*; on the PC, the *Sync* button. Pick the same folder on both (a Syncthing, OneDrive or Google Drive folder). More in [windows/README.md](windows/README.md).
 
 ## Build
 
@@ -66,6 +69,8 @@ app/src/main/java/com/bobby/cadence/
   alarm/   scheduler, notifications, priority card, focus timer
   ui/      Compose screens: home, editor, calendar, focus, settings, tutorial
   widget/  home-screen widget
+windows/   Cadence for Windows (Rust + Slint): core/ is shared logic with tests, app/ is the window
+docs/SYNC.md   the sync file format both apps follow
 ```
 
 </details>

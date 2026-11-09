@@ -75,6 +75,8 @@ object BackupManager {
         put("occurrence", t.occurrence)
         put("seriesId", t.seriesId)
         t.durationMin?.let { put("durationMin", it) }
+        if (t.uuid.isNotEmpty()) put("uuid", t.uuid)
+        put("updatedAt", t.updatedAt)
     }
 
     private fun taskFromJson(o: JSONObject) = Task(
@@ -92,6 +94,8 @@ object BackupManager {
         occurrence = o.optInt("occurrence", 1),
         seriesId = o.optLong("seriesId", 0),
         durationMin = if (o.has("durationMin")) o.getInt("durationMin") else null,
+        uuid = o.optString("uuid", ""),
+        updatedAt = o.optLong("updatedAt", 0L),
     )
 
     // ---- focus sessions ----

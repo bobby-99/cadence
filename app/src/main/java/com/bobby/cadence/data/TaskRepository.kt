@@ -72,7 +72,8 @@ class TaskRepository(
             }
             task = t.copy(calendarEventId = newId)
         }
-        dao.insert(task)
+        // updatedAt = 0 makes the database stamp it as new, which also clears the "deleted" mark
+        dao.insert(task.copy(updatedAt = 0L))
         scheduler.schedule(task)
     }
 
@@ -93,6 +94,8 @@ class TaskRepository(
             if (next != null) {
                 val clone = t.copy(
                     id = 0,
+                    uuid = "",
+                    updatedAt = 0L,
                     completed = false,
                     completedAt = null,
                     dueDate = next.toEpochDay(),

@@ -43,6 +43,17 @@ data class Task(
     val calendarEventId: Long? = null,
     /** planned length in minutes; used for calendar blocks and focus sessions */
     val durationMin: Int? = null,
+    /** identity that is the same on every device; filled in by a database trigger when left empty */
+    val uuid: String = "",
+    /** epoch millis of the last change to the synced fields; kept up to date by a database trigger */
+    val updatedAt: Long = 0L,
+)
+
+/** Remembers that a task was deleted, so the deletion can reach the other devices. */
+@Entity(tableName = "deleted_tasks")
+data class Tombstone(
+    @PrimaryKey val uuid: String,
+    val deletedAt: Long,
 )
 
 val Task.date: LocalDate? get() = dueDate?.let { LocalDate.ofEpochDay(it) }
@@ -112,6 +123,24 @@ interface TaskDao {
     @Query("DELETE FROM tasks WHERE id = :id")
     suspend fun delete(id: Long)
 
+    @Query("DELETE FROM tasks WHERE uuid = :uuid")
+    suspend fun deleteByUuid(uuid: String)
+
+    @Query("UPDATE tasks SET updatedAt = :at WHERE id = :id")
+    suspend fun setUpdatedAt(id: Long, at: Long)
+
+    @Query("UPDATE tasks SET seriesId = :series WHERE id = :id")
+    suspend fun setSeries(id: Long, series: Long)
+
+    @Query("SELECT * FROM deleted_tasks")
+    suspend fun getTombstones(): List<Tombstone>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun putTombstone(t: Tombstone)
+
+    @Query("DELETE FROM deleted_tasks WHERE deletedAt < :before")
+    suspend fun pruneTombstones(before: Long)
+
     @Query("DELETE FROM tasks")
     suspend fun deleteAll()
 
@@ -122,7 +151,7 @@ interface TaskDao {
     suspend fun deleteAllCompleted(): Int
 }
 
-@Database(entities = [Task::class, FocusSession::class], version = 3, exportSchema = false)
+@Database(entities = [Task::class, FocusSession::class, Tombstone::class], version = 4, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao
     abstract fun focusDao(): FocusDao
@@ -130,8 +159,24 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         fun build(ctx: android.content.Context): AppDatabase =
             Room.databaseBuilder(ctx.applicationContext, AppDatabase::class.java, "cadence.db")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addCallback(object : RoomDatabase.Callback() {
+                    // triggers are not part of Room's schema, so make sure they exist on every open
+                    override fun onOpen(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+                        SyncSql.installTriggers(db)
+                    }
+                })
                 .build()
+
+        private val MIGRATION_3_4 = object : androidx.room.migration.Migration(3, 4) {
+            override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE tasks ADD COLUMN uuid TEXT NOT NULL DEFAULT ''")
+                db.execSQL("ALTER TABLE tasks ADD COLUMN updatedAt INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("CREATE TABLE IF NOT EXISTS `deleted_tasks` (`uuid` TEXT NOT NULL, `deletedAt` INTEGER NOT NULL, PRIMARY KEY(`uuid`))")
+                // every existing task gets its own identity and counts as changed now
+                db.execSQL("UPDATE tasks SET uuid = lower(hex(randomblob(16))), updatedAt = (strftime('%s','now') * 1000)")
+            }
+        }
 
         private val MIGRATION_2_3 = object : androidx.room.migration.Migration(2, 3) {
             override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
