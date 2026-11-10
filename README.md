@@ -14,7 +14,7 @@
 
 <br />
 
-<img src="docs/screenshots/overview.png" alt="Cadence screenshots: list, adding a task, calendar and focus timer" />
+<img src="docs/screenshots/overview.png" alt="Cadence screenshots: list, adding a task with live highlighting, calendar and focus timer" />
 
 </div>
 
@@ -33,10 +33,11 @@ Write **"Call mom tomorrow 6pm !!"** and Cadence works out the date, time and pr
 | **Calendar** | Week and month views, search, and your phone calendar's events alongside your tasks. |
 | **Focus** | Pomodoro and freestyle timers, tags, a daily goal and an Insights heatmap. |
 | **Widget and share** | Add and complete tasks from the home screen. Share text from any app into Cadence. |
-| **Windows companion** | A tiny native app that stays in step with the phone through a shared folder. No server. See [Sync](docs/SYNC.md). |
-| **Private by design** | No account, no sync, no ads, no network. Backup and restore to a file, or to a folder automatically. |
+| **Sync with a PC** | Phone and computer share one file in a folder you already sync (Syncthing, OneDrive, Google Drive). No server, no account. See [Sync](docs/SYNC.md). |
+| **Windows app** *(early preview)* | A small native companion that reads the same list. Basic for now: list, add, complete, rename, delete. Editing, highlighting and settings are still to come. |
+| **Private by design** | No account, no ads, no network access. Sync is optional and goes only through a folder you choose. Backup and restore to a file, or to a folder automatically. |
 
-On purpose it has no projects, subtasks, task tags, collaboration or sync. See [what belongs in Cadence](CONTRIBUTING.md#what-belongs-in-cadence).
+On purpose it has no projects, subtasks, task tags, accounts or collaboration, and no cloud sync. See [what belongs in Cadence](CONTRIBUTING.md#what-belongs-in-cadence).
 
 ## Install
 
@@ -46,7 +47,7 @@ On purpose it has no projects, subtasks, task tags, collaboration or sync. See [
 
 Needs Android 8.0 (API 26) or newer. Updates install over the old version and keep your tasks.
 
-**Windows (optional):** download `Cadence-…-windows-x64.exe` from the same release page and run it. Then set up sync: on the phone, Settings, Backup and restore, *Sync with a computer*; on the PC, the *Sync* button. Pick the same folder on both (a Syncthing, OneDrive or Google Drive folder). More in [windows/README.md](windows/README.md).
+**Windows (optional, early preview):** download `Cadence-…-windows-x64.exe` from the same release page and run it. Then set up sync: on the phone, Settings, Backup and restore, *Sync with a computer*; on the PC, the *Sync* button. Pick the same folder on both (a Syncthing, OneDrive or Google Drive folder). More in [windows/README.md](windows/README.md).
 
 ## Build
 
